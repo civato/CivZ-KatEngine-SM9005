@@ -1,0 +1,7 @@
+export ARCH=arm
+export CROSS_COMPILE=~/KERNEL/TOOLCHAINS/arm-eabi-4.7/bin/arm-eabi-
+make VARIANT_DEFCONFIG=msm8974_sec_hlte_eur_defconfig CivZ_KitKat1.0_defconfig SELINUX_DEFCONFIG=selinux_defconfig
+make -j5
+rm -rf mod
+mkdir mod
+cp `find ./ | grep .ko$` modules.order mod/
