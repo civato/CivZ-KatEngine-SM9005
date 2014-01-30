@@ -39,7 +39,9 @@
 
 struct notifier_block freq_transition;
 struct notifier_block cpu_hotplug;
+#ifdef CONFIG_MSM_HOTPLUG
 struct notifier_block freq_policy;
+#endif
 
 struct cpu_load_data {
 	cputime64_t prev_cpu_idle;
@@ -232,6 +234,7 @@ static int system_suspend_handler(struct notifier_block *nb,
 	return NOTIFY_OK;
 }
 
+#ifdef CONFIG_MSM_HOTPLUG
 static int freq_policy_handler(struct notifier_block *nb,
 			unsigned long event, void *data)
 {
@@ -248,6 +251,7 @@ static int freq_policy_handler(struct notifier_block *nb,
 out:
 	return NOTIFY_DONE;
 }
+#endif
 
 static ssize_t hotplug_disable_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -428,12 +432,16 @@ static int __init msm_rq_stats_init(void)
 	}
 	freq_transition.notifier_call = cpufreq_transition_handler;
 	cpu_hotplug.notifier_call = cpu_hotplug_handler;
+#ifdef CONFIG_MSM_HOTPLUG
 	freq_policy.notifier_call = freq_policy_handler;
+#endif
 	cpufreq_register_notifier(&freq_transition,
 					CPUFREQ_TRANSITION_NOTIFIER);
 	register_hotcpu_notifier(&cpu_hotplug);
+#ifdef CONFIG_MSM_HOTPLUG
 	cpufreq_register_notifier(&freq_policy,
 					CPUFREQ_POLICY_NOTIFIER);
+#endif
 
 	return ret;
 }
